@@ -3,6 +3,15 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const POPULAR_GENRES = [
+  { category: 'エンターテイメント', items: ['お笑い', 'ゲーム実況', '音楽', 'アニメ'] },
+  { category: '教育・学習', items: ['プログラミング', '英語学習', 'ビジネス', '資格試験'] },
+  { category: 'ライフスタイル', items: ['料理', 'DIY', 'ファッション', '美容'] },
+  { category: '健康', items: ['筋トレ', 'ヨガ', 'ダイエット', '健康'] },
+  { category: 'ホビー', items: ['ガジェット', '旅行', 'ペット', 'スポーツ'] },
+  { category: 'ビジネス', items: ['株式投資', '仮想通貨', '不動産', '副業'] },
+];
+
 export default function HomePage() {
   const [query, setQuery] = useState('');
   const [maxResults, setMaxResults] = useState(10);
@@ -20,6 +29,11 @@ export default function HomePage() {
     if (query.trim()) {
       router.push(`/research?q=${encodeURIComponent(query)}&max=${maxResults}`);
     }
+  };
+
+  const handleGenreClick = (genre: string) => {
+    setQuery(genre);
+    router.push(`/search?q=${encodeURIComponent(genre)}&max=${maxResults}`);
   };
 
   return (
@@ -83,6 +97,33 @@ export default function HomePage() {
               </button>
             </div>
           </form>
+        </div>
+
+        {/* Popular Genres Section */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-900">
+            🔥 人気ジャンル
+          </h2>
+          <div className="space-y-6">
+            {POPULAR_GENRES.map((category) => (
+              <div key={category.category} className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                  {category.category}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {category.items.map((genre) => (
+                    <button
+                      key={genre}
+                      onClick={() => handleGenreClick(genre)}
+                      className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700 transition transform hover:scale-105 text-sm font-medium shadow-sm"
+                    >
+                      {genre}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-12 text-center text-sm text-gray-500">
