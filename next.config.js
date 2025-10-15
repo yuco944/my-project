@@ -6,4 +6,4 @@ const nextConfig = {
   transpilePackages: [],
 };
 
-module.exports = nextConfig;
+export default nextConfig;
