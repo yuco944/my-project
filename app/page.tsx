@@ -3,18 +3,19 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const POPULAR_GENRES = [
-  { category: 'エンターテイメント', items: ['お笑い', 'ゲーム実況', '音楽', 'アニメ'] },
-  { category: '教育・学習', items: ['プログラミング', '英語学習', 'ビジネス', '資格試験'] },
-  { category: 'ライフスタイル', items: ['料理', 'DIY', 'ファッション', '美容'] },
-  { category: '健康', items: ['筋トレ', 'ヨガ', 'ダイエット', '健康'] },
-  { category: 'ホビー', items: ['ガジェット', '旅行', 'ペット', 'スポーツ'] },
-  { category: 'ビジネス', items: ['株式投資', '仮想通貨', '不動産', '副業'] },
-];
+const POPULAR_GENRES = {
+  'エンターテイメント': ['お笑い', 'ゲーム実況', '音楽', 'アニメ'],
+  '教育・学習': ['プログラミング', '英語学習', 'ビジネス', '資格試験'],
+  'ライフスタイル': ['料理', 'DIY', 'ファッション', '美容'],
+  '健康': ['筋トレ', 'ヨガ', 'ダイエット', '健康'],
+  'ホビー': ['ガジェット', '旅行', 'ペット', 'スポーツ'],
+  'ビジネス': ['株式投資', '仮想通貨', '不動産', '副業'],
+};
 
 export default function HomePage() {
   const [query, setQuery] = useState('');
   const [maxResults, setMaxResults] = useState(10);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -31,9 +32,12 @@ export default function HomePage() {
     }
   };
 
-  const handleGenreClick = (genre: string) => {
-    setQuery(genre);
-    router.push(`/search?q=${encodeURIComponent(genre)}&max=${maxResults}`);
+  const handleGenreSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const genre = e.target.value;
+    if (genre) {
+      setQuery(genre);
+      router.push(`/search?q=${encodeURIComponent(genre)}&max=${maxResults}`);
+    }
   };
 
   return (
@@ -102,27 +106,31 @@ export default function HomePage() {
         {/* Popular Genres Section */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold text-center mb-8 text-gray-900">
-            🔥 人気ジャンル
+            🔥 人気ジャンルから選ぶ
           </h2>
-          <div className="space-y-6">
-            {POPULAR_GENRES.map((category) => (
-              <div key={category.category} className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                  {category.category}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {category.items.map((genre) => (
-                    <button
-                      key={genre}
-                      onClick={() => handleGenreClick(genre)}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700 transition transform hover:scale-105 text-sm font-medium shadow-sm"
-                    >
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <label htmlFor="genre-select" className="block text-sm font-medium text-gray-700 mb-3">
+              カテゴリとジャンルを選択
+            </label>
+            <select
+              id="genre-select"
+              onChange={handleGenreSelect}
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+            >
+              <option value="">ジャンルを選択してください</option>
+              {Object.entries(POPULAR_GENRES).map(([category, genres]) => (
+                <optgroup key={category} label={category}>
+                  {genres.map((genre) => (
+                    <option key={genre} value={genre}>
                       {genre}
-                    </button>
+                    </option>
                   ))}
-                </div>
-              </div>
-            ))}
+                </optgroup>
+              ))}
+            </select>
+            <p className="mt-3 text-sm text-gray-500">
+              選択すると自動的に検索が開始されます
+            </p>
           </div>
         </div>
 
