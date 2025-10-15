@@ -53,7 +53,7 @@ export default function SearchPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-gray-600">Loading videos...</p>
+        <p className="mt-4 text-gray-600">動画を読み込み中...</p>
       </div>
     );
   }
@@ -62,10 +62,10 @@ export default function SearchPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-red-800 mb-2">Error</h2>
+          <h2 className="text-xl font-bold text-red-800 mb-2">エラー</h2>
           <p className="text-red-600">{error}</p>
           <Link href="/" className="inline-block mt-4 text-blue-600 hover:underline">
-            ← Back to home
+            ← ホームに戻る
           </Link>
         </div>
       </div>
@@ -76,13 +76,13 @@ export default function SearchPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <Link href="/" className="text-blue-600 hover:underline">
-          ← Back to home
+          ← ホームに戻る
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-2">Search Results</h1>
+      <h1 className="text-3xl font-bold mb-2">検索結果</h1>
       <p className="text-gray-600 mb-8">
-        Found {videos.length} videos for "{query}"
+        「{query}」の検索結果: {videos.length}件
       </p>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -110,7 +110,7 @@ export default function SearchPage() {
                 rel="noopener noreferrer"
                 className="inline-block text-sm text-blue-600 hover:underline"
               >
-                Watch on YouTube →
+                YouTubeで見る →
               </a>
             </div>
           </div>

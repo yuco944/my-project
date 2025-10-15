@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'YouTube Research',
-  description: 'YouTube video research and analysis tool',
+  title: 'YouTubeリサーチ',
+  description: 'YouTube動画のリサーチ・分析ツール',
 };
 
 export default function RootLayout({
