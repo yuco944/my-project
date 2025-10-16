@@ -13,6 +13,22 @@ import type {
   AnalysisResult,
 } from './types';
 
+/**
+ * Convert ISO 8601 duration to seconds
+ * @param duration - ISO 8601 duration string (e.g., "PT1M30S")
+ * @returns Duration in seconds
+ */
+function parseDuration(duration: string): number {
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+
+  const hours = parseInt(match[1] || '0', 10);
+  const minutes = parseInt(match[2] || '0', 10);
+  const seconds = parseInt(match[3] || '0', 10);
+
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
 export class YouTubeResearchService {
   private client: YouTubeAPIClient;
 
@@ -172,6 +188,32 @@ export class YouTubeResearchService {
     }
 
     return viralScore * timeBonus;
+  }
+
+  /**
+   * Filter videos by duration type
+   * @param videos - Array of video information
+   * @param durationType - Type of videos (all, shorts, regular)
+   * @returns Filtered videos
+   */
+  filterByDuration(videos: VideoInfo[], durationType: string = 'all'): VideoInfo[] {
+    if (durationType === 'all') {
+      return videos;
+    }
+
+    return videos.filter(video => {
+      const durationInSeconds = parseDuration(video.duration);
+
+      if (durationType === 'shorts') {
+        // Shorts: 60秒以下
+        return durationInSeconds <= 60;
+      } else if (durationType === 'regular') {
+        // 通常動画: 60秒より長い
+        return durationInSeconds > 60;
+      }
+
+      return true;
+    });
   }
 
   /**

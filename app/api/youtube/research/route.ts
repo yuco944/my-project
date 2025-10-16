@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const maxResults = parseInt(searchParams.get('max') || '20', 10);
     const period = searchParams.get('period') || 'all';
     const sortBy = searchParams.get('sortBy') || 'viral';
+    const durationType = searchParams.get('durationType') || 'all';
 
     if (!query) {
       return NextResponse.json(
@@ -32,8 +33,11 @@ export async function GET(request: NextRequest) {
     // Enrich with channel info and sort
     const enrichedVideos = await service.enrichAndSortVideos(videos, sortBy);
 
+    // Filter by duration type (all, shorts, regular)
+    const filteredVideos = service.filterByDuration(enrichedVideos, durationType);
+
     // Analyze data
-    const analysis = service.analyzeData(enrichedVideos);
+    const analysis = service.analyzeData(filteredVideos);
 
     // Generate report
     const report = service.generateReport(analysis);
@@ -43,7 +47,7 @@ export async function GET(request: NextRequest) {
       maxResults,
       analysis,
       report,
-      videos: enrichedVideos,
+      videos: filteredVideos,
     });
   } catch (error) {
     console.error('Research error:', error);

@@ -18,6 +18,7 @@ export default function HomePage() {
   const [maxResults, setMaxResults] = useState(10);
   const [period, setPeriod] = useState('all');
   const [sortBy, setSortBy] = useState('viral');
+  const [durationType, setDurationType] = useState('all');
   const router = useRouter();
 
   const buildSearchQuery = () => {
@@ -43,7 +44,7 @@ export default function HomePage() {
     e.preventDefault();
     const searchQuery = buildSearchQuery();
     if (searchQuery) {
-      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}&sortBy=${sortBy}`);
+      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}&sortBy=${sortBy}&durationType=${durationType}`);
     }
   };
 
@@ -131,6 +132,22 @@ export default function HomePage() {
               <p className="mt-2 text-xs text-gray-500">
                 ※バズり度 = 登録者数に対する再生回数の比率
               </p>
+            </div>
+
+            <div>
+              <label htmlFor="durationType" className="block text-sm font-medium text-gray-700 mb-2">
+                動画の種類
+              </label>
+              <select
+                id="durationType"
+                value={durationType}
+                onChange={(e) => setDurationType(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">すべて</option>
+                <option value="shorts">📱 Shorts（60秒以下）</option>
+                <option value="regular">🎬 通常動画（60秒より長い）</option>
+              </select>
             </div>
 
             <div className="flex gap-4">
