@@ -25,11 +25,12 @@ export class YouTubeResearchService {
    * Search for YouTube videos
    * @param query - Search query string
    * @param maxResults - Maximum number of results (default: 10)
+   * @param period - Time period filter (day, week, month, year, all)
    * @returns Promise with search results
    */
-  async searchVideos(query: string, maxResults = 10): Promise<VideoSearchResult[]> {
-    console.log(`Searching videos: ${query}`);
-    return await this.client.searchVideos(query, maxResults);
+  async searchVideos(query: string, maxResults = 10, period = 'all'): Promise<VideoSearchResult[]> {
+    console.log(`Searching videos: ${query} (period: ${period})`);
+    return await this.client.searchVideos(query, maxResults, period);
   }
 
   /**
@@ -146,11 +147,12 @@ export class YouTubeResearchService {
    * Complete research workflow
    * @param query - Search query
    * @param maxResults - Maximum number of results
+   * @param period - Time period filter
    * @returns Complete research report
    */
-  async performResearch(query: string, maxResults = 20): Promise<string> {
+  async performResearch(query: string, maxResults = 20, period = 'all'): Promise<string> {
     // Search for videos
-    const searchResults = await this.searchVideos(query, maxResults);
+    const searchResults = await this.searchVideos(query, maxResults, period);
 
     // Get detailed info for each video
     const videoInfoPromises = searchResults.map((result) =>

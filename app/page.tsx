@@ -16,6 +16,7 @@ export default function HomePage() {
   const [query, setQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
   const [maxResults, setMaxResults] = useState(10);
+  const [period, setPeriod] = useState('all');
   const router = useRouter();
 
   const buildSearchQuery = () => {
@@ -33,7 +34,7 @@ export default function HomePage() {
     e.preventDefault();
     const searchQuery = buildSearchQuery();
     if (searchQuery) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&max=${maxResults}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}`);
     }
   };
 
@@ -41,7 +42,7 @@ export default function HomePage() {
     e.preventDefault();
     const searchQuery = buildSearchQuery();
     if (searchQuery) {
-      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}`);
+      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}`);
     }
   };
 
@@ -91,6 +92,24 @@ export default function HomePage() {
                 <option value={10}>10件</option>
                 <option value={20}>20件</option>
                 <option value={50}>50件</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="period" className="block text-sm font-medium text-gray-700 mb-2">
+                投稿期間
+              </label>
+              <select
+                id="period"
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">すべて</option>
+                <option value="day">過去24時間</option>
+                <option value="week">過去1週間</option>
+                <option value="month">過去1ヶ月</option>
+                <option value="year">過去1年</option>
               </select>
             </div>
 

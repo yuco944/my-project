@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q');
     const maxResults = parseInt(searchParams.get('max') || '20', 10);
+    const period = searchParams.get('period') || 'all';
 
     if (!query) {
       return NextResponse.json(
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     const service = new YouTubeResearchService(process.env.YOUTUBE_API_KEY);
 
     // Get search results
-    const searchResults = await service.searchVideos(query, maxResults);
+    const searchResults = await service.searchVideos(query, maxResults, period);
 
     // Get detailed info for each video
     const videoInfoPromises = searchResults.map(result =>

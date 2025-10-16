@@ -27,18 +27,46 @@ export class YouTubeAPIClient {
    * Search for YouTube videos
    * @param query - Search query string
    * @param maxResults - Maximum number of results (default: 10, max: 50)
+   * @param period - Time period filter (day, week, month, year, all)
    * @returns Promise with search results
    */
-  async searchVideos(query: string, maxResults = 10): Promise<VideoSearchResult[]> {
+  async searchVideos(query: string, maxResults = 10, period: string = 'all'): Promise<VideoSearchResult[]> {
     try {
+      const params: Record<string, string | number> = {
+        part: 'snippet',
+        q: query,
+        type: 'video',
+        maxResults: Math.min(maxResults, 50),
+        key: this.apiKey,
+      };
+
+      // Add publishedAfter filter based on period
+      if (period !== 'all') {
+        const now = new Date();
+        let publishedAfter: Date;
+
+        switch (period) {
+          case 'day':
+            publishedAfter = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            break;
+          case 'week':
+            publishedAfter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case 'month':
+            publishedAfter = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case 'year':
+            publishedAfter = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+            break;
+          default:
+            publishedAfter = new Date(0);
+        }
+
+        params.publishedAfter = publishedAfter.toISOString();
+      }
+
       const response = await this.client.get('/search', {
-        params: {
-          part: 'snippet',
-          q: query,
-          type: 'video',
-          maxResults: Math.min(maxResults, 50),
-          key: this.apiKey,
-        },
+        params,
       });
 
       return response.data.items.map((item: any) => ({
