@@ -14,29 +14,40 @@ const POPULAR_GENRES = {
 
 export default function HomePage() {
   const [query, setQuery] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState('');
   const [maxResults, setMaxResults] = useState(10);
   const router = useRouter();
 
+  const buildSearchQuery = () => {
+    const parts = [];
+    if (query.trim()) {
+      parts.push(query.trim());
+    }
+    if (selectedGenre) {
+      parts.push(selectedGenre);
+    }
+    return parts.join(' ');
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}&max=${maxResults}`);
+    const searchQuery = buildSearchQuery();
+    if (searchQuery) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&max=${maxResults}`);
     }
   };
 
   const handleResearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/research?q=${encodeURIComponent(query)}&max=${maxResults}`);
+    const searchQuery = buildSearchQuery();
+    if (searchQuery) {
+      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}`);
     }
   };
 
   const handleGenreSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const genre = e.target.value;
-    if (genre) {
-      setQuery(genre);
-      router.push(`/search?q=${encodeURIComponent(genre)}&max=${maxResults}`);
-    }
+    setSelectedGenre(genre);
   };
 
   return (
@@ -113,6 +124,7 @@ export default function HomePage() {
             </label>
             <select
               id="genre-select"
+              value={selectedGenre}
               onChange={handleGenreSelect}
               className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
             >
@@ -127,8 +139,20 @@ export default function HomePage() {
                 </optgroup>
               ))}
             </select>
+            {selectedGenre && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm text-blue-800">
+                  <strong>選択中のジャンル:</strong> {selectedGenre}
+                </p>
+                {query.trim() && (
+                  <p className="text-sm text-blue-800 mt-1">
+                    <strong>組み合わせ検索:</strong> {query.trim()} + {selectedGenre}
+                  </p>
+                )}
+              </div>
+            )}
             <p className="mt-3 text-sm text-gray-500">
-              選択すると自動的に検索が開始されます
+              検索ワードとジャンルを組み合わせて検索できます
             </p>
           </div>
         </div>
