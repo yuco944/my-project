@@ -63,7 +63,12 @@ export class YouTubeAPIClient {
         }
 
         params.publishedAfter = publishedAfter.toISOString();
+        console.log(`[YouTubeAPI] Period filter: ${period}, publishedAfter: ${params.publishedAfter}`);
+      } else {
+        console.log(`[YouTubeAPI] Period filter: all (no time filter)`);
       }
+
+      console.log(`[YouTubeAPI] Search params:`, params);
 
       const response = await this.client.get('/search', {
         params,
