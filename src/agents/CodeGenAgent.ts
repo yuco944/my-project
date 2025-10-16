@@ -38,13 +38,13 @@ export class CodeGenAgent {
     }
   }
 
-  private async generateCode(issue: IssueData, tasks: Task[]): Promise<GeneratedCode> {
+  private async generateCode(issue: IssueData, _tasks: Task[]): Promise<GeneratedCode> {
     // Check if using Claude Code integration (no external API key)
     if (this.config.anthropicApiKey === 'CLAUDE_CODE_INTEGRATED') {
-      return this.generateCodeWithoutAPI(issue, tasks);
+      return this.generateCodeWithoutAPI(issue, _tasks);
     }
 
-    const prompt = this.buildPrompt(issue, tasks);
+    const prompt = this.buildPrompt(issue, _tasks);
 
     const message = await this.anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',

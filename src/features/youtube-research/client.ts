@@ -3,8 +3,8 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import type { VideoSearchResult, VideoInfo, ChannelSearchResult } from './types.js';
-import { config, validateConfig } from './config.js';
+import type { VideoSearchResult, VideoInfo, ChannelSearchResult } from './types';
+import { config } from './config';
 
 export class YouTubeAPIClient {
   private client: AxiosInstance;

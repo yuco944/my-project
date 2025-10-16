@@ -5,14 +5,13 @@
  * video search, channel search, data analysis, and report generation.
  */
 
-import { YouTubeAPIClient } from './client.js';
+import { YouTubeAPIClient } from './client';
 import type {
   VideoSearchResult,
   VideoInfo,
   ChannelSearchResult,
   AnalysisResult,
-  Report,
-} from './types.js';
+} from './types';
 
 export class YouTubeResearchService {
   private client: YouTubeAPIClient;
@@ -168,5 +167,5 @@ export class YouTubeResearchService {
 }
 
 // Export for convenience
-export { YouTubeAPIClient } from './client.js';
-export * from './types.js';
+export { YouTubeAPIClient } from './client';
+export * from './types';

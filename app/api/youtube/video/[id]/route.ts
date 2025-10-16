@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { YouTubeResearchService } from '../../../../../src/features/youtube-research/index.js';
+import { YouTubeResearchService } from '@/src/features/youtube-research';
 
 export async function GET(
   request: NextRequest,

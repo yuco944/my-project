@@ -15,7 +15,6 @@ const POPULAR_GENRES = {
 export default function HomePage() {
   const [query, setQuery] = useState('');
   const [maxResults, setMaxResults] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState('');
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
