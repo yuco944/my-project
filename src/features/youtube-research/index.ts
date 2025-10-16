@@ -144,13 +144,91 @@ export class YouTubeResearchService {
   }
 
   /**
+   * Calculate viral score for a video
+   * @param video - Video information
+   * @returns Viral score
+   */
+  private calculateViralScore(video: VideoInfo): number {
+    if (!video.channelSubscriberCount || video.channelSubscriberCount === 0) {
+      // 登録者数が取得できない場合は、再生回数のみで評価
+      return video.viewCount / 10000;
+    }
+
+    // バズり度 = 再生回数 / (登録者数 + 1000)
+    // +1000は、小規模チャンネルでも適切に評価されるためのオフセット
+    const viralScore = video.viewCount / (video.channelSubscriberCount + 1000);
+
+    // 投稿からの経過日数を考慮（最近の動画をより高く評価）
+    const publishedDate = new Date(video.publishedAt);
+    const now = new Date();
+    const daysAgo = (now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24);
+
+    // 1週間以内の動画は2倍、1ヶ月以内は1.5倍のボーナス
+    let timeBonus = 1.0;
+    if (daysAgo <= 7) {
+      timeBonus = 2.0;
+    } else if (daysAgo <= 30) {
+      timeBonus = 1.5;
+    }
+
+    return viralScore * timeBonus;
+  }
+
+  /**
+   * Enrich videos with channel information and viral scores
+   * @param videos - Array of video information
+   * @param sortBy - Sort order (viral, viewCount, date)
+   * @returns Enriched and sorted videos
+   */
+  async enrichAndSortVideos(videos: VideoInfo[], sortBy: string = 'viral'): Promise<VideoInfo[]> {
+    console.log(`Enriching ${videos.length} videos with channel info...`);
+
+    // チャンネルIDをユニークに取得
+    const uniqueChannelIds = [...new Set(videos.map(v => v.channelId).filter(Boolean))];
+
+    // チャンネル情報を一括取得（API効率化）
+    const channelSubscribers: Record<string, number> = {};
+    for (const channelId of uniqueChannelIds) {
+      if (channelId) {
+        const subscriberCount = await this.client.getChannelSubscriberCount(channelId);
+        channelSubscribers[channelId] = subscriberCount;
+      }
+    }
+
+    // 動画にチャンネル登録者数とバズり度を追加
+    const enrichedVideos = videos.map(video => {
+      const subscriberCount = video.channelId ? channelSubscribers[video.channelId] || 0 : 0;
+      const enrichedVideo = {
+        ...video,
+        channelSubscriberCount: subscriberCount,
+      };
+      enrichedVideo.viralScore = this.calculateViralScore(enrichedVideo);
+      return enrichedVideo;
+    });
+
+    // ソート
+    if (sortBy === 'viral') {
+      return enrichedVideos.sort((a, b) => (b.viralScore || 0) - (a.viralScore || 0));
+    } else if (sortBy === 'viewCount') {
+      return enrichedVideos.sort((a, b) => b.viewCount - a.viewCount);
+    } else if (sortBy === 'date') {
+      return enrichedVideos.sort((a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      );
+    }
+
+    return enrichedVideos;
+  }
+
+  /**
    * Complete research workflow
    * @param query - Search query
    * @param maxResults - Maximum number of results
    * @param period - Time period filter
+   * @param sortBy - Sort order
    * @returns Complete research report
    */
-  async performResearch(query: string, maxResults = 20, period = 'all'): Promise<string> {
+  async performResearch(query: string, maxResults = 20, period = 'all', sortBy = 'viral'): Promise<string> {
     // Search for videos
     const searchResults = await this.searchVideos(query, maxResults, period);
 
@@ -160,8 +238,11 @@ export class YouTubeResearchService {
     );
     const videos = await Promise.all(videoInfoPromises);
 
+    // Enrich with channel info and sort by viral score
+    const enrichedVideos = await this.enrichAndSortVideos(videos, sortBy);
+
     // Analyze data
-    const analysis = this.analyzeData(videos);
+    const analysis = this.analyzeData(enrichedVideos);
 
     // Generate report
     return this.generateReport(analysis);

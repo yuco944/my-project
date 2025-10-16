@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get('q');
     const maxResults = parseInt(searchParams.get('max') || '20', 10);
     const period = searchParams.get('period') || 'all';
+    const sortBy = searchParams.get('sortBy') || 'viral';
 
     if (!query) {
       return NextResponse.json(
@@ -28,8 +29,11 @@ export async function GET(request: NextRequest) {
     );
     const videos = await Promise.all(videoInfoPromises);
 
+    // Enrich with channel info and sort
+    const enrichedVideos = await service.enrichAndSortVideos(videos, sortBy);
+
     // Analyze data
-    const analysis = service.analyzeData(videos);
+    const analysis = service.analyzeData(enrichedVideos);
 
     // Generate report
     const report = service.generateReport(analysis);
@@ -39,7 +43,7 @@ export async function GET(request: NextRequest) {
       maxResults,
       analysis,
       report,
-      videos,
+      videos: enrichedVideos,
     });
   } catch (error) {
     console.error('Research error:', error);

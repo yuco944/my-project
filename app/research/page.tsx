@@ -33,6 +33,7 @@ function ResearchContent() {
   const query = searchParams.get('q') || '';
   const max = searchParams.get('max') || '20';
   const period = searchParams.get('period') || 'all';
+  const sortBy = searchParams.get('sortBy') || 'viral';
 
   const [data, setData] = useState<ResearchData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ function ResearchContent() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/api/youtube/research?q=${encodeURIComponent(query)}&max=${max}&period=${period}`);
+        const response = await fetch(`/api/youtube/research?q=${encodeURIComponent(query)}&max=${max}&period=${period}&sortBy=${sortBy}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch research data');
@@ -61,7 +62,7 @@ function ResearchContent() {
     if (query) {
       fetchResearch();
     }
-  }, [query, max, period]);
+  }, [query, max, period, sortBy]);
 
   if (loading) {
     return (

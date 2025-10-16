@@ -120,12 +120,41 @@ export class YouTubeAPIClient {
         commentCount: parseInt(item.statistics.commentCount || '0', 10),
         duration: item.contentDetails.duration,
         publishedAt: item.snippet.publishedAt,
+        channelId: item.snippet.channelId,
+        channelTitle: item.snippet.channelTitle,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(`YouTube API error: ${error.response?.data?.error?.message || error.message}`);
       }
       throw error;
+    }
+  }
+
+  /**
+   * Get channel subscriber count by channel ID
+   * @param channelId - YouTube channel ID
+   * @returns Promise with subscriber count
+   */
+  async getChannelSubscriberCount(channelId: string): Promise<number> {
+    try {
+      const response = await this.client.get('/channels', {
+        params: {
+          part: 'statistics',
+          id: channelId,
+          key: this.apiKey,
+        },
+      });
+
+      if (!response.data.items || response.data.items.length === 0) {
+        console.warn(`Channel not found: ${channelId}`);
+        return 0;
+      }
+
+      return parseInt(response.data.items[0].statistics.subscriberCount || '0', 10);
+    } catch (error) {
+      console.error(`Error getting channel subscriber count for ${channelId}:`, error);
+      return 0;
     }
   }
 

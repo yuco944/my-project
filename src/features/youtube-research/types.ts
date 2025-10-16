@@ -25,6 +25,10 @@ export interface VideoInfo {
   commentCount: number;
   duration: string;
   publishedAt: string;
+  channelId?: string;
+  channelTitle?: string;
+  channelSubscriberCount?: number;
+  viralScore?: number; // バズり度スコア
 }
 
 export interface ChannelSearchResult {

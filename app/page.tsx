@@ -17,6 +17,7 @@ export default function HomePage() {
   const [selectedGenre, setSelectedGenre] = useState('');
   const [maxResults, setMaxResults] = useState(10);
   const [period, setPeriod] = useState('all');
+  const [sortBy, setSortBy] = useState('viral');
   const router = useRouter();
 
   const buildSearchQuery = () => {
@@ -42,7 +43,7 @@ export default function HomePage() {
     e.preventDefault();
     const searchQuery = buildSearchQuery();
     if (searchQuery) {
-      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}`);
+      router.push(`/research?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}&sortBy=${sortBy}`);
     }
   };
 
@@ -111,6 +112,25 @@ export default function HomePage() {
                 <option value="month">過去1ヶ月</option>
                 <option value="year">過去1年</option>
               </select>
+            </div>
+
+            <div>
+              <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700 mb-2">
+                並び順（詳細分析のみ）
+              </label>
+              <select
+                id="sortBy"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="viral">🔥 バズり度順（おすすめ）</option>
+                <option value="viewCount">👁️ 再生回数順</option>
+                <option value="date">📅 新しい順</option>
+              </select>
+              <p className="mt-2 text-xs text-gray-500">
+                ※バズり度 = 登録者数に対する再生回数の比率
+              </p>
             </div>
 
             <div className="flex gap-4">
