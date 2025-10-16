@@ -12,6 +12,8 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'viral';
     const durationType = searchParams.get('durationType') || 'all';
 
+    console.log(`[API] durationType parameter: ${durationType}`);
+
     if (!query) {
       return NextResponse.json(
         { error: 'Query parameter is required' },

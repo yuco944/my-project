@@ -197,23 +197,33 @@ export class YouTubeResearchService {
    * @returns Filtered videos
    */
   filterByDuration(videos: VideoInfo[], durationType: string = 'all'): VideoInfo[] {
+    console.log(`[filterByDuration] durationType: ${durationType}, videos count: ${videos.length}`);
+
     if (durationType === 'all') {
       return videos;
     }
 
-    return videos.filter(video => {
+    const filtered = videos.filter(video => {
       const durationInSeconds = parseDuration(video.duration);
+      console.log(`[filterByDuration] Video: ${video.title.substring(0, 30)}... Duration: ${video.duration} = ${durationInSeconds}s`);
 
       if (durationType === 'shorts') {
         // Shorts: 60秒以下
-        return durationInSeconds <= 60;
+        const isShort = durationInSeconds <= 60;
+        console.log(`[filterByDuration] Is Short? ${isShort}`);
+        return isShort;
       } else if (durationType === 'regular') {
         // 通常動画: 60秒より長い
-        return durationInSeconds > 60;
+        const isRegular = durationInSeconds > 60;
+        console.log(`[filterByDuration] Is Regular? ${isRegular}`);
+        return isRegular;
       }
 
       return true;
     });
+
+    console.log(`[filterByDuration] Filtered count: ${filtered.length}`);
+    return filtered;
   }
 
   /**
