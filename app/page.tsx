@@ -36,7 +36,7 @@ export default function HomePage() {
     e.preventDefault();
     const searchQuery = buildSearchQuery();
     if (searchQuery) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&max=${maxResults}&period=${period}&durationType=${durationType}`);
     }
   };
 

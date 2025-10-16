@@ -20,6 +20,7 @@ function SearchContent() {
   const query = searchParams.get('q') || '';
   const max = searchParams.get('max') || '10';
   const period = searchParams.get('period') || 'all';
+  const durationType = searchParams.get('durationType') || 'all';
 
   const [videos, setVideos] = useState<VideoResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,7 @@ function SearchContent() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}&max=${max}&period=${period}`);
+        const response = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}&max=${max}&period=${period}&durationType=${durationType}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch videos');
@@ -48,7 +49,7 @@ function SearchContent() {
     if (query) {
       fetchVideos();
     }
-  }, [query, max, period]);
+  }, [query, max, period, durationType]);
 
   if (loading) {
     return (
