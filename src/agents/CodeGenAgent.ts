@@ -63,7 +63,7 @@ export class CodeGenAgent {
     return this.parseGeneratedCode(responseText, issue);
   }
 
-  private generateCodeWithoutAPI(issue: IssueData, tasks: Task[]): GeneratedCode {
+  private generateCodeWithoutAPI(issue: IssueData, _tasks: Task[]): GeneratedCode {
     // Generate basic implementation structure based on issue requirements
     const files: Array<{ path: string; content: string }> = [];
 
